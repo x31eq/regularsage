@@ -48,22 +48,30 @@ def TE_badness(plimit, mapping, Ek=0):
     """
     Cangwu badness with a TE metric
     """
-    M = matrix(mapping)
-    epsilon = Ek / sqrt(1 + Ek**2)
-    W = TE_weighting(plimit)
-    H = matrix(RR, plimit)
-    Mp = M - (1 - epsilon) * M*W*W*H.transpose() / len(plimit) * H
-    return TE_complexity(plimit, Mp * sqrt(1 + Ek**2))
+    Mp = matrix(mapping) * Cangwu_transformation(plimit, Ek)
+    return size_of_matrix(Mp)
 
 def Cangwu_badness(plimit, mapping, Ek=0):
     """
     TE_badness with a different formula
     """
-    M = matrix(mapping)
+    return size_of_matrix(matrix(mapping), Cangwu_metric(plimit, Ek))
+
+def Cangwu_transformation(plimit, Ek=0):
+    """
+    Matrix to transform a mapping matrix into "Cangwu badness" space.
+    """
+    epsilon = Ek / sqrt(1 + Ek**2)
+    W = TE_weighting(plimit)
+    J = matrix([1]*len(plimit))
+    trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
+    return matrix(RR, trans * sqrt((1 + Ek**2) / len(plimit)))
+
+def Cangwu_metric(plimit, Ek=0):
     W = TE_weighting(plimit)
     J = matrix([1]*len(plimit))
     metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
-    return size_of_matrix(M, metric / len(plimit))
+    return metric / len(plimit)
 
 def TE_error(plimit, mapping):
     return TE_badness(plimit, mapping) / TE_complexity(plimit, mapping)
