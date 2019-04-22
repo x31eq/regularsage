@@ -176,5 +176,20 @@ class MinimaxByUnisonVectors(MinimaxOptimizer):
         return matrix([g for i, g in sorted(harmonics.items())])
 
 
+class TOPByMapping(MinimaxByMapping):
+    def __init__(self, plimit, mapping):
+        self.plimit = [1]*len(plimit)
+        self.linear_program = MixedIntegerLinearProgram()
+        self.mapping = matrix(mapping)
+        weighted_mapping = self.mapping * TE_weighting(plimit)
+        self.generators = self.linear_program.new_variable(
+                real=True, nonnegative=False)
+        self.harmonics = [
+            sum(m*p for (m, p) in zip(pmap, self.generators))
+            for pmap in zip(*weighted_mapping)]
+        self.consonances = matrix(ZZ, len(plimit), len(plimit), 1)
+        self.set_standard_constraints(False)
+
+
 def kernel(mapping):
     return matrix(mapping).right_kernel().matrix().LLL(delta=0.3)
