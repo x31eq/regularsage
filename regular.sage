@@ -57,6 +57,14 @@ def Cangwu_badness(plimit, mapping, Ek=0):
     """
     return size_of_matrix(matrix(mapping), Cangwu_metric(plimit, Ek))
 
+def Quadratic_badness(plimit, mapping, Ek=0):
+    """
+    Another Cangwu formula
+    """
+    badness = TE_badness(plimit, mapping)
+    complexity = TE_complexity(plimit, mapping)
+    return RR(sqrt(((badness**2 + (Ek * complexity)**2)) / (1 + Ek**2)))
+
 def Cangwu_transformation(plimit, Ek=0):
     """
     Matrix to transform a mapping matrix into "Cangwu badness" space.
