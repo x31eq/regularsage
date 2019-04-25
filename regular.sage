@@ -109,6 +109,49 @@ def size_of_matrix(M, metric=None):
 
 
 #
+# TE things with symbolic output
+#
+
+def TE_complexity_sym(plimit, M):
+    W = TE_weighting_sym(plimit)
+    return size_of_matrix(matrix(M), W*W / len(plimit))
+
+def TE_badness_sym(plimit, mapping, Ek=0):
+    Mp = matrix(mapping) * Cangwu_transformation_sym(plimit, Ek)
+    return size_of_matrix(Mp)
+
+def Cangwu_badness_sym(plimit, mapping, Ek=0):
+    return size_of_matrix(matrix(mapping), Cangwu_metric_sym(plimit, Ek))
+
+def Quadratic_badness_sym(plimit, mapping, Ek=0):
+    badness = TE_badness_sym(plimit, mapping)
+    complexity = TE_complexity_sym(plimit, mapping)
+    return sqrt((badness**2 + (Ek * complexity)**2) / (1 + Ek**2))
+
+def Cangwu_transformation_sym(plimit, Ek=0):
+    epsilon = Ek / sqrt(1 + Ek**2)
+    W = TE_weighting_sym(plimit)
+    J = matrix([1]*len(plimit))
+    trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
+    return matrix(trans / sqrt(len(plimit)))
+
+def Cangwu_metric_sym(plimit, Ek=0):
+    W = TE_weighting_sym(plimit)
+    J = matrix([1]*len(plimit))
+    metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
+    return metric / len(plimit) / (1 + Ek**2)
+
+def TE_weighting_sym(plimit):
+    """
+    plimit must be a list not a matrix
+    """
+    rank = len(plimit)
+    W = matrix(SR, rank, rank)
+    for i, p in enumerate(plimit):
+        W[i, i] = 1/p
+    return W
+
+#
 # Minimax things
 #
 
