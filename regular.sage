@@ -65,13 +65,13 @@ def Cangwu_transformation(plimit, Ek=0):
     W = TE_weighting(plimit)
     J = matrix([1]*len(plimit))
     trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
-    return matrix(RR, trans * sqrt((1 + Ek**2) / len(plimit)))
+    return matrix(RR, trans / sqrt(len(plimit)))
 
 def Cangwu_metric(plimit, Ek=0):
     W = TE_weighting(plimit)
     J = matrix([1]*len(plimit))
     metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
-    return metric / len(plimit)
+    return metric / len(plimit) / (1 + Ek**2)
 
 def TE_error(plimit, mapping):
     return TE_badness(plimit, mapping) / TE_complexity(plimit, mapping)
