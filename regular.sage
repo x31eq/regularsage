@@ -42,11 +42,7 @@ def TE_complexity(plimit, mapping, prec=53):
     but plimit must be a list
     """
     W = TE_weighting(plimit, prec=prec)
-    if prec:
-        M = matrix(RealField(prec), mapping)
-    else:
-        # prec is None means symbolic calculation
-        M = matrix(mapping)
+    M = matrix(RealField(prec), mapping) if prec else matrix(mapping)
     return size_of_matrix(M, W*W / len(plimit))
 
 def TE_badness(plimit, mapping, Ek=0, prec=53):
@@ -69,23 +65,18 @@ def Quadratic_badness(plimit, mapping, Ek=0, prec=53):
     """
     badness = TE_badness(plimit, mapping, prec=prec)
     complexity = TE_complexity(plimit, mapping, prec=prec)
-    result = sqrt(((badness**2 + (Ek * complexity)**2)) / (1 + Ek**2))
-    if prec:
-        return N(result, prec=prec)
-    return result
+    raw = (badness**2 + (Ek * complexity)**2)
+    return sqrt(raw / (1 + Ek**2), prec)
 
 def Cangwu_transformation(plimit, Ek=0, prec=53):
     """
     Matrix to transform a mapping matrix into "Cangwu badness" space.
     """
-    epsilon = Ek / sqrt(1 + Ek**2)
+    epsilon = Ek / sqrt(1 + Ek**2, prec)
     W = TE_weighting(plimit, prec=prec)
     J = matrix([1]*len(plimit))
     trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
-    result = matrix(trans / sqrt(len(plimit)))
-    if prec:
-        return N(result, prec=prec)
-    return result
+    return matrix(trans / sqrt(len(plimit), prec))
 
 def Cangwu_metric(plimit, Ek=0, prec=53):
     W = TE_weighting(plimit, prec=prec)
