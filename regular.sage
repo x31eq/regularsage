@@ -65,7 +65,7 @@ def Quadratic_badness(plimit, mapping, Ek=0, prec=53):
     """
     badness = TE_badness(plimit, mapping, prec=prec)
     complexity = TE_complexity(plimit, mapping, prec=prec)
-    raw = (badness**2 + (Ek * complexity)**2)
+    raw = badness**2 + (Ek * complexity)**2
     return sqrt(raw / (1 + Ek**2), prec)
 
 def Cangwu_transformation(plimit, Ek=0, prec=53):
