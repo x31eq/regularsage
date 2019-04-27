@@ -1,0 +1,36 @@
+This is some example code for regular temperament calculations
+in sage (http://www.sagemath.org/).
+
+Example session:
+
+sage: load("regular.sage")
+sage: marvel = [[19, 30, 44, 53, 66], [22, 35, 51, 62, 76], [31, 49, 72, 87, 107
+....: ]]
+sage: TE_complexity(prime_limit(11), marvel)
+0.155663817581076
+sage: TE_error(prime_limit(11), marvel)
+0.000358912952067382
+sage: TE_badness(prime_limit(11), marvel, 1/1200)
+0.000141239727910669
+sage: expand(Cangwu_badness(prime_limit(11), marvel, 1/1200, prec=None) - Quadra
+....: tic_badness(prime_limit(11), marvel, 1/1200, prec=None))
+0
+sage: TE_generators(prime_limit(11), marvel)*1200
+[14.0590944364153 18.0239676709297 17.3222631713724]
+sage: TOPByMapping(prime_limit(11), marvel).optimal_generators()*1200
+Long-step dual simplex will be used
+[ 11.30885270680194 17.427536967152477 19.426925475896425]
+sage: TOPByMapping(prime_limit(11), marvel).tuning_map()*1200
+Long-step dual simplex will be used
+[1200.5087044593806 1901.1487233733199  2785.132538688604 3370.0190018269454  4149.558114073434]
+sage: odd_limit_minimax(11, marvel)*1200
+Long-step dual simplex will be used
+[13.010049463220229 18.792048524571307    17.399483634137]
+sage: odd_limit_hermite_minimax(11, marvel)*1200
+Long-step dual simplex will be used
+[            1200.0 1900.5978803293156 2783.5994727926904]
+sage: odd_limit_hermite_minimax(11, marvel)*1200
+Long-step dual simplex will be used
+[            1200.0 1900.5978803293156 2783.5994727926904]
+sage: temper_out(225/224, 385/384) == matrix(marvel).hermite_form()
+True
