@@ -112,6 +112,26 @@ def size_of_matrix(M, metric=None):
         gram = M * metric * M.transpose()
     return sqrt(gram.determinant())
 
+def badness_equivalence_proof(rank, dimension):
+    """
+    Try to show if two different badness calculations are identical
+    for a given rank and dimension.
+    Should return True but might not even for a valid equivalence
+    """
+    assert rank in ZZ
+    assert dimension in ZZ
+    assert 0 < rank <= dimension
+    mapping = [
+            var(['m' + str(i) + str(j) for j in range(dimension)],
+                domain='integer')
+            for i in range(rank)]
+    plimit = var(['p' + str(i) for i in range(dimension)], domain='real')
+    var('Ek')
+    cangwu = Cangwu_badness(plimit, mapping, Ek, prec=None)
+    quadratic = Quadratic_badness(plimit, mapping, Ek, prec=None)
+    # As the last step in the badness calculation is a square root,
+    # undoing that is useful to get the symbolic expressions to agree
+    return bool(expand(cangwu**2) == expand(quadratic**2))
 
 #
 # Minimax things
