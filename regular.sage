@@ -36,53 +36,67 @@ def temper_out(*ratios):
 # TE things
 #
 
-def TE_complexity(plimit, M):
+def TE_complexity(plimit, mapping, prec=53):
     """
     M can be a matrix of a list of lists
     but plimit must be a list
     """
-    W = TE_weighting(plimit)
-    return size_of_matrix(matrix(RR, M), W*W / len(plimit))
+    W = TE_weighting(plimit, prec=prec)
+    if prec:
+        M = matrix(RealField(prec), mapping)
+    else:
+        # prec is None means symbolic calculation
+        M = matrix(mapping)
+    return size_of_matrix(M, W*W / len(plimit))
 
-def TE_badness(plimit, mapping, Ek=0):
+def TE_badness(plimit, mapping, Ek=0, prec=53):
     """
     Cangwu badness with a TE metric
     """
-    Mp = matrix(mapping) * Cangwu_transformation(plimit, Ek)
+    Mp = matrix(mapping) * Cangwu_transformation(plimit, Ek, prec=prec)
     return size_of_matrix(Mp)
 
-def Cangwu_badness(plimit, mapping, Ek=0):
+def Cangwu_badness(plimit, mapping, Ek=0, prec=53):
     """
     TE_badness with a different formula
     """
-    return size_of_matrix(matrix(mapping), Cangwu_metric(plimit, Ek))
+    G = Cangwu_metric(plimit, Ek, prec=prec)
+    return size_of_matrix(matrix(mapping), G)
 
-def Quadratic_badness(plimit, mapping, Ek=0):
+def Quadratic_badness(plimit, mapping, Ek=0, prec=53):
     """
     Another Cangwu formula
     """
-    badness = TE_badness(plimit, mapping)
-    complexity = TE_complexity(plimit, mapping)
-    return RR(sqrt(((badness**2 + (Ek * complexity)**2)) / (1 + Ek**2)))
+    badness = TE_badness(plimit, mapping, prec=prec)
+    complexity = TE_complexity(plimit, mapping, prec=prec)
+    result = sqrt(((badness**2 + (Ek * complexity)**2)) / (1 + Ek**2))
+    if prec:
+        return N(result, prec=prec)
+    return result
 
-def Cangwu_transformation(plimit, Ek=0):
+def Cangwu_transformation(plimit, Ek=0, prec=53):
     """
     Matrix to transform a mapping matrix into "Cangwu badness" space.
     """
     epsilon = Ek / sqrt(1 + Ek**2)
-    W = TE_weighting(plimit)
+    W = TE_weighting(plimit, prec=prec)
     J = matrix([1]*len(plimit))
     trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
-    return matrix(RR, trans / sqrt(len(plimit)))
+    result = matrix(trans / sqrt(len(plimit)))
+    if prec:
+        return N(result, prec=prec)
+    return result
 
-def Cangwu_metric(plimit, Ek=0):
-    W = TE_weighting(plimit)
+def Cangwu_metric(plimit, Ek=0, prec=53):
+    W = TE_weighting(plimit, prec=prec)
     J = matrix([1]*len(plimit))
     metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
     return metric / len(plimit) / (1 + Ek**2)
 
-def TE_error(plimit, mapping):
-    return TE_badness(plimit, mapping) / TE_complexity(plimit, mapping)
+def TE_error(plimit, mapping, prec=53):
+    badness = TE_badness(plimit, mapping, prec=prec)
+    complexity = TE_complexity(plimit, mapping, prec=prec)
+    return badness / complexity
 
 def TE_generators(plimit, mapping):
     M = matrix(mapping)
@@ -90,14 +104,14 @@ def TE_generators(plimit, mapping):
     W = TE_weighting(plimit)
     return J*(M*W).pseudoinverse()
 
-def TE_weighting(plimit):
+def TE_weighting(plimit, prec=53):
     """
     plimit must be a list not a matrix
     """
     rank = len(plimit)
-    W = matrix(RR, rank, rank)
+    W = matrix(RealField(prec) if prec else SR, rank, rank)
     for i, p in enumerate(plimit):
-        W[i, i] = 1.0/p
+        W[i, i] = 1/p
     return W
 
 def size_of_matrix(M, metric=None):
@@ -107,49 +121,6 @@ def size_of_matrix(M, metric=None):
         gram = M * metric * M.transpose()
     return sqrt(gram.determinant())
 
-
-#
-# TE things with symbolic output
-#
-
-def TE_complexity_sym(plimit, M):
-    W = TE_weighting_sym(plimit)
-    return size_of_matrix(matrix(M), W*W / len(plimit))
-
-def TE_badness_sym(plimit, mapping, Ek=0):
-    Mp = matrix(mapping) * Cangwu_transformation_sym(plimit, Ek)
-    return size_of_matrix(Mp)
-
-def Cangwu_badness_sym(plimit, mapping, Ek=0):
-    return size_of_matrix(matrix(mapping), Cangwu_metric_sym(plimit, Ek))
-
-def Quadratic_badness_sym(plimit, mapping, Ek=0):
-    badness = TE_badness_sym(plimit, mapping)
-    complexity = TE_complexity_sym(plimit, mapping)
-    return sqrt((badness**2 + (Ek * complexity)**2) / (1 + Ek**2))
-
-def Cangwu_transformation_sym(plimit, Ek=0):
-    epsilon = Ek / sqrt(1 + Ek**2)
-    W = TE_weighting_sym(plimit)
-    J = matrix([1]*len(plimit))
-    trans = W - (1 - epsilon) * W*J.transpose() / len(plimit) * J
-    return matrix(trans / sqrt(len(plimit)))
-
-def Cangwu_metric_sym(plimit, Ek=0):
-    W = TE_weighting_sym(plimit)
-    J = matrix([1]*len(plimit))
-    metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
-    return metric / len(plimit) / (1 + Ek**2)
-
-def TE_weighting_sym(plimit):
-    """
-    plimit must be a list not a matrix
-    """
-    rank = len(plimit)
-    W = matrix(SR, rank, rank)
-    for i, p in enumerate(plimit):
-        W[i, i] = 1/p
-    return W
 
 #
 # Minimax things
