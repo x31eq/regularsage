@@ -146,13 +146,15 @@ def badness_equivalence_simple_proof(rank, dimension):
         var(['m' + str(i) for i in range(rank * dimension)]))
     var('Ek2')  # Ek**2
     MJ = matrix(list(map(mean, M)))
-    MM = M * M.transpose() / rank
+    MM = M * M.transpose() / dimension
     MJJM = MJ.transpose() * MJ
     comp2 = MM.determinant()
     bad2 = (MM - MJJM).determinant()
     cangwu2 = (MM - MJJM / (1 + Ek2)).determinant() * (1 + Ek2)
     quad2 = comp2 * Ek2 + bad2
-    return bool(expand(cangwu2) == expand(quad2))
+    lhs = expand(simplify(expand(cangwu2 * (1 + Ek2))))
+    rhs = expand(quad2 * (1 + Ek2))
+    return bool(lhs == rhs)
 
 
 #
