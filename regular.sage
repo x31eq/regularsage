@@ -81,8 +81,8 @@ def Cangwu_transformation(plimit, Ek=0, prec=53):
 def Cangwu_metric(plimit, Ek=0, prec=53):
     W = TE_weighting(plimit, prec=prec)
     J = matrix([1]*len(plimit))
-    metric = W*W * (1 + Ek**2) - (W * J.transpose()*J * W) / len(plimit)
-    return metric / len(plimit) / (1 + Ek**2)
+    metric = W*W - (W * J.transpose()*J * W) / len(plimit) / (1 + Ek**2)
+    return metric / len(plimit)
 
 def TE_error(plimit, mapping, prec=53):
     badness = TE_badness(plimit, mapping, prec=prec)
