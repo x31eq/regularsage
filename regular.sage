@@ -150,9 +150,9 @@ def badness_equivalence_simple_proof(rank, dimension):
     MJJM = MJ.transpose() * MJ
     comp2 = MM.determinant()
     bad2 = (MM - MJJM).determinant()
-    cangwu2 = (MM - MJJM / (1 + Ek2)).determinant() * (1 + Ek2)
+    cangwu2 = expand(MM - MJJM / (1 + Ek2)).determinant() * (1 + Ek2)
     quad2 = comp2 * Ek2 + bad2
-    lhs = expand(simplify(expand(cangwu2 * (1 + Ek2))))
+    lhs = expand(cangwu2 * (1 + Ek2))
     rhs = expand(quad2 * (1 + Ek2))
     return bool(lhs == rhs)
 
