@@ -34,41 +34,25 @@ Long-step dual simplex will be used
 [            1200.0 1900.5978803293156 2783.5994727926904]
 sage: temper_out(225/224, 385/384) == matrix(marvel).hermite_form()
 True
-sage: %time badness_equivalence_proof(1, 2)
-CPU times: user 165 ms, sys: 28.1 ms, total: 193 ms
-Wall time: 179 ms
+sage: %time all(badness_equivalence_proof(1, n+1) for n in range(1, 13))
+CPU times: user 1min 16s, sys: 820 ms, total: 1min 17s
+Wall time: 1min 6s
 True
-sage: %time badness_equivalence_proof(1, 5)
-CPU times: user 940 ms, sys: 44.5 ms, total: 984 ms
-Wall time: 927 ms
-True
-sage: time all(badness_equivalence_proof(1, n) for n in range(2, 14))
-CPU times: user 28.9 s, sys: 677 ms, total: 29.6 s
-Wall time: 28.4 s
-True
-sage: %time badness_equivalence_proof(2, 2)
-CPU times: user 1.07 s, sys: 52.5 ms, total: 1.12 s
-Wall time: 1.1 s
-True
-sage: %time badness_equivalence_proof(2, 3)
-CPU times: user 2.4 s, sys: 125 ms, total: 2.53 s
-Wall time: 2.32 s
-True
-sage: %time badness_equivalence_proof(2, 4)
-CPU times: user 5.55 s, sys: 68.3 ms, total: 5.62 s
-Wall time: 5.14 s
-True
-sage: %time all(badness_equivalence_proof(2, n) for n in range(2, 8))
-CPU times: user 3min 2s, sys: 524 ms, total: 3min 3s
-Wall time: 2min 37s
+sage: %time all(badness_equivalence_proof(2, n+2) for n in range(7))
+CPU times: user 53.6 s, sys: 300 ms, total: 53.9 s
+Wall time: 41.6 s
 True
 sage: %time badness_equivalence_proof(3, 3)
-CPU times: user 4.65 s, sys: 84.5 ms, total: 4.73 s
-Wall time: 4.32 s
+CPU times: user 3.5 s, sys: 64.1 ms, total: 3.57 s
+Wall time: 2.97 s
 True
 sage: %time badness_equivalence_proof(3, 4)
-CPU times: user 53 s, sys: 136 ms, total: 53.1 s
-Wall time: 45.7 s
+CPU times: user 9.76 s, sys: 56.1 ms, total: 9.81 s
+Wall time: 7.09 s
+True
+sage: %time badness_equivalence_proof(3, 5)
+CPU times: user 32.4 s, sys: 148 ms, total: 32.6 s
+Wall time: 21.7 s
 True
 sage: %time all(badness_equivalence_simple_proof(1, n+1) for n in range(1, 20))
 CPU times: user 26.7 s, sys: 264 ms, total: 27 s

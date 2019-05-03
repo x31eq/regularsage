@@ -129,9 +129,21 @@ def badness_equivalence_proof(rank, dimension):
     var('Ek')
     cangwu = Cangwu_badness(plimit, mapping, Ek, prec=None)
     quadratic = Quadratic_badness(plimit, mapping, Ek, prec=None)
-    # As the last step in the badness calculation is a square root,
-    # undoing that is useful to get the symbolic expressions to agree
-    return bool(expand(cangwu**2) == expand(quadratic**2))
+    bad2 = Cangwu_badness(plimit, mapping, prec=None)**2
+
+    def simplify_result(result):
+        # Rearrange these to be Ek**2 * complexity**2
+        # which gets rid of square roots and is simpler
+        comp2 = result**2 * (Ek**2 + 1) - bad2
+        # Solving for Ek**2 removes a variable
+        # and puts the expression in a standard form
+        [solution] = solve(comp2 == 1, Ek**2)
+        assert solution.lhs() == Ek**2
+        return solution.rhs()
+
+    lhs = simplify_result(cangwu)
+    rhs = simplify_result(quadratic)
+    return bool(lhs == rhs)
 
 def badness_equivalence_simple_proof(rank, dimension):
     """
