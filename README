@@ -54,6 +54,10 @@ sage: %time badness_equivalence_proof(3, 5)
 CPU times: user 32.4 s, sys: 148 ms, total: 32.6 s
 Wall time: 21.7 s
 True
+sage: %time badness_equivalence_proof(3, 6)
+CPU times: user 1min 22s, sys: 252 ms, total: 1min 23s
+Wall time: 53.9 s
+True
 sage: %time all(badness_equivalence_simple_proof(1, n+1) for n in range(1, 20))
 CPU times: user 26.7 s, sys: 264 ms, total: 27 s
 Wall time: 25 s
