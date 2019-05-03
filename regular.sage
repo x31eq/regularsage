@@ -122,7 +122,7 @@ def badness_equivalence_proof(rank, dimension):
     assert dimension in ZZ
     assert 0 < rank <= dimension
     mapping = [
-            var(['m' + str(i) + str(j) for j in range(dimension)],
+            var(['m' + str(i) + '_' + str(j) for j in range(dimension)],
                 domain='integer')
             for i in range(rank)]
     plimit = var(['p' + str(i) for i in range(dimension)], domain='real')
