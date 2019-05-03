@@ -133,6 +133,32 @@ def badness_equivalence_proof(rank, dimension):
     # undoing that is useful to get the symbolic expressions to agree
     return bool(expand(cangwu**2) == expand(quadratic**2))
 
+def badness_equivalence_simple_proof(rank, dimension):
+    """
+    Try to show if two different simplifications of Cangwu badness
+    are equivalent.
+    """
+    assert rank in ZZ
+    assert dimension in ZZ
+    assert 0 < rank <= dimension
+    # M is a ready-weighted mapping
+    M = matrix(rank, dimension,
+        var(['m' + str(i) for i in range(rank * dimension)]))
+    var('Ek2')  # Ek**2
+    MJ = matrix(list(map(mean, M)))
+    MM = M * M.transpose() / dimension
+    MJJM = MJ.transpose() * MJ
+    comp2 = MM.determinant()
+    bad2 = (MM - MJJM).determinant()
+    cangwu2 = expand(MM - MJJM / (1 + Ek2)).determinant() * (1 + Ek2)
+    [cangwuEk2] = solve(cangwu2 - bad2 == 1, Ek2)
+    [(cangwuRoot, multiplicity)] = cangwuEk2.roots()
+    assert multiplicity == 1
+    lhs = expand(cangwuRoot)
+    rhs = expand(1 / comp2)
+    return bool(lhs == rhs)
+
+
 #
 # Minimax things
 #
