@@ -165,8 +165,8 @@ def badness_equivalence_simple_proof(rank, dimension):
     cangwu2 = expand(MM - MJJM / (1 + Ek2)).determinant() * (1 + Ek2)
     [solution] = (cangwu2 - bad2 == 1).solve(Ek2)
     assert solution.lhs() == Ek2
-    lhs = expand(solution.rhs())
-    rhs = expand(1 / comp2)
+    lhs = solution.rhs()
+    rhs = 1 / comp2
     return bool(lhs == rhs)
 
 
